@@ -1,0 +1,32 @@
+class Solution {
+    public int minCost(int[][] costs) {
+        // length is K
+        // minCost/Color/(N) --> at N, if the end is the color, what is the min cost
+        // minCostG(N+1) = min(minCostB(N), minCostR(N)) + G(N), (N from 0 to K-1)
+        // minCostB(N+1) = min(minCostR(N), minCostG(N)) + B(N)
+        // minCostR(N+1) = min(minCostB(N), minCostG(N)) + R(N)
+        // minCostG(0) = G(0)
+        // minCostB(0) = B(0)
+        // minCostR(0) = R(0)
+        // minCostG(1) = min() + G(1)
+        // minCostB(1) = min() + B(1)
+        // minCostR(1) = min() + R(1)
+        int k = costs.length;
+        int[] minCostR = new int[k]; // [0]
+        int[] minCostB = new int[k]; // [1]
+        int[] minCostG = new int[k]; // [2]
+        
+        minCostR[0] = costs[0][0];
+        minCostB[0] = costs[0][1];
+        minCostG[0] = costs[0][2];
+        
+        for (int i = 1; i < k; i++){
+            minCostR[i] = Math.min(minCostB[i-1], minCostG[i-1]) + costs[i][0];
+            minCostB[i] = Math.min(minCostR[i-1], minCostG[i-1]) + costs[i][1];
+            minCostG[i] = Math.min(minCostR[i-1], minCostB[i-1]) + costs[i][2];
+        }
+        
+        return Math.min(minCostR[k-1], Math.min(minCostB[k-1], minCostG[k-1]));
+    }
+    
+}
