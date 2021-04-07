@@ -1,0 +1,90 @@
+class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        // findWordsPerLine
+        // each word, add " ", find right until exceed max width
+        // 
+        // if line width == max width, valid
+        // if line width > max, remove last words, if words more than 1, evenlyPadding, if words == 1, rightPadding
+        // if line width < max, keep adding
+        // if line width < max, word is the last one rightPadding
+        int start = 0;
+        List<String> results = new ArrayList<>();
+        
+        while (start < words.length) {
+            int[] res = findRight(words, start, maxWidth);
+            int end = res[0];
+            int wordLength = res[1];
+            results.add(constructLine(words, start, end, maxWidth, wordLength));
+            start = end + 1;
+        }
+        
+        return results;
+    }
+    
+    private int[] findRight(String[] words, int start, int maxWidth) {
+        int length = 0;
+        int wordLength = 0;
+        int end = 0;
+        
+        for (int i = start; i < words.length; i++) {
+            length = length + words[i].length();
+            wordLength = wordLength + words[i].length();
+            
+            if (length == maxWidth) { 
+                return new int[]{i, wordLength}; 
+            } 
+            if (length > maxWidth) { 
+                return new int[]{i - 1, wordLength - words[i].length()}; 
+            }
+            
+            length++; // add one space
+            end = i;
+        }
+        return new int[]{end, wordLength};
+    }
+    
+    private String constructLine(String[] words, int start, int end, int maxWidth, int wordLength) {
+        StringBuilder sb = new StringBuilder();
+        
+        if (start == end) {
+            return paddingRight(words[start], maxWidth);
+        }
+        
+        int paddingBaseCount = (maxWidth - wordLength)/(end - start);
+      
+        boolean isLastLine = false;
+        if (end == words.length - 1) {
+            // last line
+            isLastLine = true;
+            paddingBaseCount = 1;
+        }
+        String padding = padding(paddingBaseCount);
+
+        for (int i = start; i <= end - 1; i++) {
+            sb.append(words[i]);
+            if (i - start < (maxWidth - wordLength) % (end - start) && !isLastLine){
+                sb.append(" ");
+            } 
+            sb.append(padding);
+        }
+        
+        sb.append(words[end]);
+        return paddingRight(sb.toString(), maxWidth);
+    }
+    
+    private String paddingRight(String word, int maxWidth) {
+        while (word.length() < maxWidth) {
+            word = word + " ";
+        }
+        return word;
+    }
+    
+    private String padding(int n) {
+        StringBuilder padding = new StringBuilder();
+        while (n > 0) {
+            padding.append(" ");
+            n--;
+        }
+        return padding.toString();
+    }
+}
